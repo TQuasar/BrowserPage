@@ -1,0 +1,106 @@
+{
+    "defaultEngine": "bing",
+    "openMethod": "_self",
+    "incognitoMode": false,
+    "**engines": [
+        {
+            "name": "bing",
+            "host": "https://cn.bing.com/",
+            "url": "https://cn.bing.com/search?q=${query}",
+            "icon": "https://www.bing.com/favicon.ico"
+        },
+        {
+            "name": "GitHub",
+            "host": "https://github.com/",
+            "url": "https://github.com/search?q=${query}&type=repositories",
+            "icon": "https://github.githubassets.com/favicons/favicon.svg"
+        },
+        {
+            "name": "MDN",
+            "host": "https://www.mdn.org/",
+            "url": "https://developer.mozilla.org/zh-CN/search?q=${query}",
+            "icon": "https://developer.mozilla.org/favicon.ico"
+        },
+        {
+            "name": "百度搜索",
+            "host": "https://www.baidu.com/",
+            "url": "https://www.baidu.com/s?wd=${query}",
+            "icon": "https://www.baidu.com/favicon.ico"
+        },
+        {
+            "name": "搜狗搜索",
+            "host": "https://www.sogou.com/",
+            "url": "https://www.sogou.com/web?query=${query}",
+            "icon": "https://www.sogou.com/images/logo/new/favicon.ico"
+        },
+        {
+            "name": "Yandex",
+            "host": "https://www.yandex.com/",
+            "url": "https://www.yandex.com/search?text=${query}",
+            "icon": "https://yastatic.net/s3/web4static/_/v2/static/media/AppFavicon-Icon_size64_en.f61ae0f5.png"
+        }
+    ],
+
+    "maxHistory": 300,
+    "showHistory": 10,
+    "--history": [
+        ["WebStorm", "https://www.jetbrains.com.cn/webstorm/"],
+        ["Vue.js", "https://cn.vuejs.org/"],
+        ["Vite", "https://vitejs.cn/"],
+        ["Node.js", "https://nodejs.org/zh-cn"],
+        ["TypeScript", "https://www.typescriptlang.org/"],
+        ["JavaScript", "https://mdn.org.cn/en-US/docs/Web/JavaScript"],
+        ["GitHub", "https://github.com/TQuasar"]
+    ],
+
+    "**navigation": [
+        ["AI工具", [
+            ["Copilot", "https://github.com/copilot", "https://github.com/favicons/favicon-copilot.png"],
+            ["OpenAI", "https://openai.com/", "https://openai.com/favicon.ico"],
+            ["DeepSeek", "https://chat.deepseek.com/", "https://cdn.deepseek.com/chat/icon.png"],
+            ["豆包", "https://www.doubao.com/chat/", "https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/chat/favicon.png"],
+            ["文心一言", "https://yiyan.baidu.com/", "https://eb-static.cdn.bcebos.com/logo/favicon.ico"],
+            ["Claude", "https://claude.ai/", "https://cdn.prod.website-files.com/6889473510b50328dbb70ae6/689f4a9aff1f63fde75cf733_favicon.png"]
+        ]],
+        ["前端技术栈", [
+            ["VScode", "https://code.visualstudio.com/", "https://code.visualstudio.com/assets/favicon.ico"],
+            ["WebStorm", "https://www.jetbrains.com.cn/webstorm/", "https://www.jetbrains.com.cn/favicon.ico"],
+            ["MDN", "https://mdn.org.cn/", "https://mdn.org.cn/favicon.ico"],
+            ["TypeScript", "https://www.typescriptlang.org/", "https://www.typescriptlang.org/favicon-32x32.png"],
+            ["Vue.js", "https://cn.vuejs.org/", "https://cn.vuejs.org/logo.svg"],
+            ["React", "https://zh-hans.react.dev/", "https://zh-hans.react.dev/apple-touch-icon.png"],
+            ["Angular", "https://angular.cn/", "https://angular.cn/assets/icons/favicon.ico"],
+            ["Svelte", "https://svelte.js.cn/", "https://svelte.js.cn/favicon.png"],
+            ["jQuery", "https://jquery.com/", "https://jquery.com/wp-content/themes/jquery.com/i/favicon.ico"],
+            ["Next.js", "https://www.nextjs.cn/", "https://www.nextjs.cn/static/favicon/apple-touch-icon.png"],
+            ["Nuxt.js", "https://nuxtjs.org.cn/", "https://nuxtjs.org.cn/icon.png"],
+            ["Sass", "https://www.sass.hk/", "https://www.sass.hk/favicon.ico"],
+            ["Less", "https://lesscss.cn/", "https://lesscss.cn/public/ico/favicon.ico"],
+            ["Vite", "https://vitejs.cn/", "https://vitejs.cn/logo.svg"],
+            ["Node.js", "https://nodejs.org/zh-cn", "https://nodejs.org/static/images/favicons/favicon.png"],
+            ["Bootstrap", "https://www.bootcss.com/", "https://www.bootcss.com/assets/favicons/favicon.ico"],
+            ["Tailwind CSS", "https://www.tailwindcss.cn/", "https://www.tailwindcss.cn/favicons/apple-touch-icon.png"],
+            ["Webpack", "https://webpack.js.org/", "https://webpack.js.org/favicon.a3dd58d3142f7566.ico"],
+            ["Rollup", "https://rollupjs.org/", "https://rollupjs.org/favicon.png"],
+            ["ESLint", "https://eslint.org/", "https://eslint.org/favicon.ico"],
+            ["Quasar", "https://quasar.dev/", "https://cdn.quasar.dev/logo-v2/favicon/favicon-128x128.png"],
+            ["Nitro", "https://nitro.build/", "https://nitro.build/icon.svg"]
+        ]],
+        ["开发工具", [
+            ["Git", "https://git-scm.com/", "https://git-scm.com/favicon.ico"],
+            ["GitHub", "https://github.com/", "https://github.com/favicon.ico"],
+            ["GitLab", "https://about.gitlab.com/", "https://dev.gitlab.org/assets/favicon-72a2cad5025aa931d6ea56c3201d1f18e68a8cd39788c7c80d5b2b82aa5143ef.png"],
+            ["Docker", "https://www.docker.com/", "https://www.docker.com/favicon.ico"],
+            ["Postman", "https://www.postman.com/", "https://www.postman.com/_mk-www-next/favicon.ico"],
+            ["Figma", "https://www.figma.com/", "https://static.figma.com/app/icon/2/icon-128.png"]
+        ]],
+        ["云服务", [
+            ["AWS", "https://aws.amazon.com/cn/", "https://aws.amazon.com/favicon.ico"],
+            ["Azure", "https://azure.microsoft.com/", "https://azure.microsoft.com/favicon.ico"],
+            ["阿里云", "https://www.aliyun.com/", "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico"],
+            ["腾讯云", "https://cloud.tencent.com/", "https://cloud.tencent.com/favicon.ico"],
+            ["Vercel", "https://vercel.com/", "https://vercel.com/favicon.ico"],
+            ["Netlify", "https://www.netlify.com/", "https://www.netlify.com/favicon/favicon.ico"]
+        ]]
+    ]
+}
