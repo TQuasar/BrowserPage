@@ -112,11 +112,5 @@ class JSONPath {
     }
 }
 
-/*//console.log(
-    JSON.stringify(JSONPath.completeObject(
-    {"defaultEngine":"bing","openMethod":"_self","**engines":[{"name":"bing","url":"https://cn.bing.com/search?q=${query}","icon":"https://www.bing.com/favicon.ico"},{"name":"GitHub","url":"https://github.com/${query}","icon":"https://github.githubassets.com/favicons/favicon.svg"},{"name":"百度搜索","url":"https://www.baidu.com/s?wd=${query}","icon":"https://www.baidu.com/favicon.ico"},{"name":"搜狗搜索","url":"https://www.sogou.com/web?query=${query}","icon":"https://www.sogou.com/images/logo/new/favicon.ico"},{"name":"Yandex","url":"https://www.yandex.com/search?text=${query}","icon":"https://yastatic.net/s3/web4static/_/v2/static/media/AppFavicon-Icon_size64_en.f61ae0f5.png"}],"maxHistory":30,"showHistory":10,"!!history":[["WebStorm","https://www.jetbrains.com.cn/webstorm/"],["Vue.js","https://cn.vuejs.org/"],["Vite","https://vitejs.cn/"],["Node.js","https://nodejs.org/zh-cn"],["TypeScript","https://www.typescriptlang.org/"],["JavaScript","https://mdn.org.cn/en-US/docs/Web/JavaScript"],["GitHub","https://github.com/TQuasar"]]},
-    {"defaultEngine":"bing","openMethod":"_self","**engines":[{"name":"bing","url":"https://cn.bing.com/search?q=${query}","icon":"https://www.bing.com/favicon.ico"},{"name":"GitHub","url":"https://github.com/${query}","icon":"https://github.githubassets.com/favicons/favicon.svg"},{"name":"百度搜索","url":"https://www.baidu.com/s?wd=${query}","icon":"https://www.baidu.com/favicon.ico"},{"name":"搜狗搜索","url":"https://www.sogou.com/web?query=${query}","icon":"https://www.sogou.com/images/logo/new/favicon.ico"},{"name":"Yandex","url":"https://www.yandex.com/search?text=${query}","icon":"https://yastatic.net/s3/web4static/_/v2/static/media/AppFavicon-Icon_size64_en.f61ae0f5.png"}],"maxHistory":30,"showHistory":10,"!!history":[["111","https://cn.bing.com/search?q=111"],["WebStorm","https://www.jetbrains.com.cn/webstorm/"],["Vue.js","https://cn.vuejs.org/"],["Vite","https://vitejs.cn/"],["Node.js","https://nodejs.org/zh-cn"],["TypeScript","https://www.typescriptlang.org/"],["JavaScript","https://mdn.org.cn/en-US/docs/Web/JavaScript"],["GitHub","https://github.com/TQuasar"]]}
-    ))
-//);*/
 
 export default JSONPath;

@@ -1,15 +1,15 @@
 {
   "userName": "新用户",
 
-  "defaultWebsite": [
+  "--defaultWebsite": [
     {"ico": "https://www.jetbrains.com.cn/favicon.ico","name": "WebStorm：JetBrains 出品的 JavaScript 和 TypeScript IDE","url": "https://www.jetbrains.com.cn/webstorm/"},
     {"ico": "https://cn.vuejs.org/logo.svg","name": "Vue.js - 渐进式 JavaScript 框架 | Vue.js","url":"https://cn.vuejs.org/"},
     {"ico": "https://vitejs.cn/logo.svg","name": "Vite中文网","url":"https://vitejs.cn/"},
     {"ico": "https://nodejs.org/static/images/favicons/favicon.png","name": "Node.js — 在任何地方运行 JavaScript","url":"https://nodejs.org/zh-cn"},
     {"ico": "https://www.typescriptlang.org/favicon-32x32.png","name": "TypeScript: JavaScript With Syntax For Types.","url":"https://www.typescriptlang.org/"},
     {"ico": "https://mdn.org.cn/favicon.ico","name": "JavaScript | MDN - MDN 文档","url":"https://mdn.org.cn/en-US/docs/Web/JavaScript"},
-    {"ico": "https://github.githubassets.com/favicons/favicon.svg","name": "TQuasar", "url": "https://github.com/TQuasar"},
-    {"ico":"https://m.ccw.site/community/images/logo-ccw.png","name":"\uD83D\uDCAB✨☁\uFE0F◈Quasar◈☁\uFE0F✨\uD83D\uDCAB","url":"https://www.ccw.site/student/66dd029593614d59cde549bb"}
+    {"ico": "https://github.githubassets.com/favicons/favicon.svg","name": "TQuasar (Quasar)", "url": "https://github.com/TQuasar"},
+    {"ico":"https://gitee.com/static/images/logo_themecolor_circle.png","name":"TQuasar (twenty-quasar) - Gitee","url":"https://gitee.com/twenty-quasar/"}
   ],
 
   "extensions": {

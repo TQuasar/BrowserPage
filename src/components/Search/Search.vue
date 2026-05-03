@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {computed, Ref, ref} from "vue";
-import config from "./Search.config.json";
 import settingConfig from "@components/Search/manageSettingConfig";
 
 type engine = {
@@ -12,7 +11,7 @@ settingConfig.readConfig();
 
 let incognitoMode: Ref<boolean> = settingConfig.getConfig("incognitoMode");
 class History {
-  private static searchHistories: Ref<string[][]> = settingConfig.getConfig("--history");
+  private static searchHistories: Ref<string[][]> = settingConfig.getConfig("history");
   private static maxHistory: Ref<number> = settingConfig.getConfig("maxHistory");
   private static showHistory: Ref<number> = settingConfig.getConfig("showHistory");
 
@@ -21,7 +20,7 @@ class History {
   ];
 
   private static writeHistory() {
-    settingConfig.setConfig(History.searchHistories.value, "--history");
+    settingConfig.setConfig(History.searchHistories.value, "history");
     settingConfig.writeConfig();
   }
 
@@ -63,12 +62,12 @@ function openURL(url: string): void {
  * @param name the engine name
  */
 function getEngine(name: string) {
-  for (const engine of config["**engines"]) {
+  for (const engine of settingConfig.getConfig("engines").value) {
     if (engine.name == name) return engine;
   }
 }
 /* 当前选择的引擎基本属性 */
-const engineData: Ref = ref(getEngine(settingConfig.getConfig("defaultEngine").value));
+const engineData: Ref = computed(() => getEngine(settingConfig.getConfig("defaultEngine").value));
 /**
  * The function `query` searches the `queryText` with search engine
  * @param queryText The searched content
@@ -86,7 +85,7 @@ const query = (queryText: string) => {
   }
 };
 
-const bookmarks: Ref<[string, [string, string, string][]][]> = settingConfig.getConfig("**navigation");
+const bookmarks: Ref<[string, [string, string, string][]][]> = settingConfig.getConfig("navigation");
 /* 当前搜索引擎名 */
 let searchEngine = computed(() => engineData.value.name);
 /* 点击搜索框 */
@@ -139,7 +138,7 @@ let queryInput: string = "";
       <div id="convertEngine" v-if="openEnginePanel">
         <div
             class="engine"
-            v-for="(item, index) in settingConfig.getConfig('**engines').value"
+            v-for="(item, index) in settingConfig.getConfig('engines').value"
             :key="index"
             @click="
               settingConfig.setConfig(item.name, 'defaultEngine');
@@ -387,9 +386,6 @@ img {
   margin-left: 5px;
   font-size: 10px;
   color: var(--textColor5);
-}
-.historyItemName[data-incognit="true"] {
-  color: var(--textColor6);
 }
 
 #historyTool {

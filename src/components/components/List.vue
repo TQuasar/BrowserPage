@@ -7,12 +7,12 @@ import Input from "@components/components/Input.vue";
 
 interface Props {
   title?: string | boolean | undefined,
-  dynamic?: boolean,
+  order?: "in" | "out" | "no",
   items: any[]
 }
 const props = withDefaults(defineProps<Props>(), {
   title: false,
-  dynamic: false
+  order: "out"
 });
 </script>
 
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
     <Li
         v-for="(item, index) in items"
         :key="index"
-        :dynamic="dynamic"
+        :order="props.order"
     ><slot :item="item" :index="index"></slot></Li>
   </div>
 </template>
@@ -35,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   display: flex;
   flex-direction: column;
   width: 100%;
+  box-sizing: border-box;
   padding: 15px;
 }
 </style>

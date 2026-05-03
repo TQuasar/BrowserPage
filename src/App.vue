@@ -2,23 +2,30 @@
 import {provide, ref, Ref} from "vue";
 import PageBox from "@components/Page/PageBox.vue";
 import Setting from "@components/Setting/Setting.vue";
+import Tips from "@components/Tips/Tips.vue";
+import manageTips from "@components/Tips/Tips";
 
 const openSetting: Ref<boolean> = ref(true);
 
 document.addEventListener('mousedown', (e) => {
-  if (e.button !== 0) e.preventDefault();
+  if (e.button !== 0) {
+    e.preventDefault();
+  }
 })
 document.addEventListener('contextmenu', (e) => {
   e.preventDefault();
 })
-
 /* 修改开启设置的状态 */
-provide("changeSetting", () => openSetting.value = !openSetting.value);
+provide("changeSetting", () => {
+  openSetting.value = !openSetting.value;
+  if (!openSetting.value) manageTips.addTip({type: "info", text: "别忘了保存设置~", time: 1500})
+});
 
 </script>
 
 <template>
   <div class="app">
+    <Tips/>
     <Setting :open-setting="openSetting"/>
     <PageBox/>
   </div>

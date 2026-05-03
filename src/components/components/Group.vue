@@ -14,18 +14,23 @@ const isFold = ref(props.fold);
 <div class="settingGroup">
   <div class="title">
     <h1>{{ name }}</h1>
-    <div class="folder" @click="isFold = !isFold" :data-fold="String(isFold)">
+    <div class="folder" @click="isFold = !isFold" :data-fold="!isFold">
       <img width="24" height="24" src="../../assets/images/folderButton.svg" alt="展开">
     </div>
   </div>
   <hr/>
-  <div class="content" v-if="isFold">
+  <div class="content" v-if="!isFold">
     <slot></slot>
   </div>
 </div>
 </template>
 
 <style scoped>
+.settingGroup {
+  width: 100%;
+  height: 100%;
+}
+
 h1 {
   margin-bottom: 0;
   color: var(--textColor7);
@@ -52,8 +57,13 @@ hr {
   filter: brightness(110%);
 }
 
-.folder[data-fold="true"] {
+.folder[data-fold=true] {
   transform: scaleY(1);
+}
+
+.content {
+  display: block;
+  width: calc(100% - 30px);
 }
 
 .content > * {

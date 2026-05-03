@@ -17,7 +17,7 @@ interface Props {
   borderColor?: string,
   focusBorderColor?: string,
   backgroundColor?: string,
-  textColor?: string,
+  textColor?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

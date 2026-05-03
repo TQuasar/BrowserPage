@@ -2,42 +2,36 @@
     "defaultEngine": "bing",
     "openMethod": "_self",
     "incognitoMode": false,
-    "**engines": [
+    "--engines": [
         {
             "name": "bing",
-            "host": "https://cn.bing.com/",
             "url": "https://cn.bing.com/search?q=${query}",
             "icon": "https://www.bing.com/favicon.ico"
         },
         {
             "name": "GitHub",
-            "host": "https://github.com/",
             "url": "https://github.com/search?q=${query}&type=repositories",
             "icon": "https://github.githubassets.com/favicons/favicon.svg"
         },
         {
             "name": "MDN",
-            "host": "https://www.mdn.org/",
             "url": "https://developer.mozilla.org/zh-CN/search?q=${query}",
             "icon": "https://developer.mozilla.org/favicon.ico"
         },
         {
             "name": "百度搜索",
-            "host": "https://www.baidu.com/",
             "url": "https://www.baidu.com/s?wd=${query}",
             "icon": "https://www.baidu.com/favicon.ico"
         },
         {
             "name": "搜狗搜索",
-            "host": "https://www.sogou.com/",
             "url": "https://www.sogou.com/web?query=${query}",
             "icon": "https://www.sogou.com/images/logo/new/favicon.ico"
         },
         {
             "name": "Yandex",
-            "host": "https://www.yandex.com/",
             "url": "https://www.yandex.com/search?text=${query}",
-            "icon": "https://yastatic.net/s3/web4static/_/v2/static/media/AppFavicon-Icon_size64_en.f61ae0f5.png"
+            "icon": "https://yastatic.net/s3/home-static/_/a5/a557b72322add07a6b41fc8f71cfffc8.png"
         }
     ],
 
@@ -53,7 +47,7 @@
         ["GitHub", "https://github.com/TQuasar"]
     ],
 
-    "**navigation": [
+    "--navigation": [
         ["AI工具", [
             ["Copilot", "https://github.com/copilot", "https://github.com/favicons/favicon-copilot.png"],
             ["OpenAI", "https://openai.com/", "https://openai.com/favicon.ico"],

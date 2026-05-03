@@ -4,15 +4,33 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node localServer.cjs\"",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.15.2",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "vue": "^3.5.32"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
+    "concurrently": "^9.2.1",
     "vite": "^8.0.4"
-  }
+  },
+  "description": "BrowserPage 是一个基于 Vue 3 + Vite 构建的现代化浏览器启动页面。它提供了美观的界面和强大的功能，让你可以自定义你的浏览器主页，提升上网效率。",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TQuasar/BrowserPage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TQuasar/BrowserPage/issues"
+  },
+  "homepage": "https://github.com/TQuasar/BrowserPage#readme"
 }

@@ -10,6 +10,7 @@ interface Props {
   width?: string,
   height?: string,
   fontSize?: string,
+  padding?: string,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   plain: false,
   round: false,
-  circle: false,
+  circle: false
 })
 
 const emit = defineEmits<{
@@ -62,10 +63,10 @@ const colorMap = {
     ]"
     :disabled="disabled"
     :style="{
-      width: props.width,
-      height: sizeMap[size!].height,
+      width: props.circle ? (props.height ?? sizeMap[size!].height) : props.width,
+      height: props.height ?? sizeMap[size!].height,
       fontSize: sizeMap[size!].fontSize,
-      padding: sizeMap[size!].padding,
+      padding: props.padding ?? sizeMap[size!].padding,
       backgroundColor: plain ? colorMap[type!].plainBg : colorMap[type!].bg,
       borderColor: colorMap[type!].bg,
       color: plain ? colorMap[type!].plainColor : (type === 'default' ? '#606266' : '#ffffff'),

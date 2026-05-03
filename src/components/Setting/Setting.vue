@@ -5,6 +5,7 @@ import {defineAsyncComponent, reactive, Ref, ref, shallowRef} from "vue";
 import Button from "@components/components/Button.vue";
 import manageConfig from "@utils/manageConfig";
 import rawConfig from "@utils/rawConfig";
+import Tips from "@components/Tips/Tips";
 
 interface Props {
   openSetting: boolean;
@@ -56,16 +57,19 @@ const toolFunctions = reactive<Tools>({
       toolFunctions.manager!.setConfig(toolFunctions.configs!.refConfig(field.name), ...field.path)
     }
     toolFunctions.manager!.writeConfig();
+    Tips.addTip({"type": "succeed", "text": "成功保存设置", "time": 1000});
   },
   "primary": () => {
     toolFunctions.manager!.resetConfig();
     toolFunctions.manager!.writeConfig();
+    Tips.addTip({"type": "succeed", "text": "成功重置设置", "time": 1000});
   },
   "danger": () => {
     for (const field of toolFunctions.paramsList!) {
       toolFunctions.manager!.setConfig(toolFunctions.configs!.rawConfig(field.name), ...field.path)
     }
     toolFunctions.manager!.writeConfig();
+    Tips.addTip({"type": "succeed", "text": "成功取消设置", "time": 1000});
   }
 });
 
@@ -86,6 +90,7 @@ function defineSettingTools(manager: manageConfig, configs: rawConfig, paramsLis
 <div class="settingBox" :data-open="openSetting">
   <header>
     <h1 id="settingTitle">设置</h1>
+    <span id="savingTip">下滑点击确认保存设置</span>
   </header>
   <Hr width="100%" style="margin-bottom: 0" />
   <main>
@@ -109,9 +114,9 @@ function defineSettingTools(manager: manageConfig, configs: rawConfig, paramsLis
       />
       <!-- TODO: 简化按钮逻辑并传递函数 -->
       <div id="endingButtons">
-        <Button type="success" width="70px" height="50px" @click="toolFunctions.success()">确认</Button>
-        <Button type="primary" width="70px" height="50px" @click="toolFunctions.primary()">重置</Button>
-        <Button type="danger" width="70px" height="50px" @click="toolFunctions.danger()">取消</Button>
+        <Button type="success" width="70px" height="30px" @click="toolFunctions.success()">确认</Button>
+        <Button type="primary" width="70px" height="30px" @click="toolFunctions.primary()">重置</Button>
+        <Button type="danger" width="70px" height="30px" @click="toolFunctions.danger()">取消</Button>
       </div>
     </div>
   </main>
@@ -130,6 +135,11 @@ main {
 }
 #settingTitle {
   margin: 0;
+}
+
+#savingTip {
+  color: var(--textColor3);
+  font-size: 12px;
 }
 
 nav {

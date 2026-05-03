@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 interface Props {
   width?: string
 }
@@ -7,7 +7,7 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-  <hr :style="{ width: props.width ?? 95 + '%' }" />
+  <hr :style="{ width: props.width ?? 95 + '%' }"/>
 </template>
 
 <style scoped>
