@@ -20,7 +20,7 @@ class ReadWords {
                 const audio = document.createElement('audio');
                 audio.src = `https://dict.youdao.com/dictvoice?audio=${word}&type=2`;
                 ReadWords.mapping.set(word, audio);
-                ReadWords.div.append(audio);
+                ReadWords.div.appendChild(audio);
                 audio.play().catch(e => {
                     throw e;
                 })
