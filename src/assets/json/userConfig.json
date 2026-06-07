@@ -12,12 +12,24 @@
     {"ico":"https://gitee.com/static/images/logo_themecolor_circle.png","name":"TQuasar (twenty-quasar) - Gitee","url":"https://gitee.com/twenty-quasar/"}
   ],
 
-  "extensions": {
+  "!!extensions": {
     "Search": {
       "path": "/src/components/Search/Search.vue",
       "setting": "/src/components/Search/SearchSetting.vue",
       "icon": "/src/components/Search/images/enterSearch.svg",
       "languageZh": "搜索"
+    },
+    "InnerFrame": {
+      "path": "/src/components/InnerFrame/InnerFrame.vue",
+      "setting": "/src/components/InnerFrame/InnerFrameSetting.vue",
+      "icon": "/src/components/InnerFrame/frameIcon.svg",
+      "languageZh": "内嵌页面"
+    },
+    "EnglishNotebook": {
+      "path": "/src/components/EnglishNotebook/Notebook.vue",
+      "setting": "/src/components/EnglishNotebook/NotebookSetting.vue",
+      "icon": "/src/components/EnglishNotebook/EnglishIcon.svg",
+      "languageZh": "英语笔记本"
     }
   }
 }

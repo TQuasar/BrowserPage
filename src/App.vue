@@ -5,7 +5,7 @@ import Setting from "@components/Setting/Setting.vue";
 import Tips from "@components/Tips/Tips.vue";
 import manageTips from "@components/Tips/Tips";
 
-const openSetting: Ref<boolean> = ref(true);
+const openSetting: Ref<boolean> = ref(false);
 
 document.addEventListener('mousedown', (e) => {
   if (e.button !== 0) {

@@ -17,7 +17,8 @@ interface Props {
   borderColor?: string,
   focusBorderColor?: string,
   backgroundColor?: string,
-  textColor?: string
+  textColor?: string,
+  boxShadow?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   focusBorderColor: '#b6d5b8',
   backgroundColor: 'rgb(223 234 223)',
   textColor: '#454545',
+  boxShadow: 'rgb(83 255 64 / 0.2)'
 })
 
 const emit = defineEmits<{
@@ -98,7 +100,7 @@ const handleChange = (event: Event) => {
 
 .input:focus {
   border-color: v-bind(focusBorderColor);
-  box-shadow: 0 0 0 2px rgb(83 255 64 / 0.2);
+  box-shadow: 0 0 0 2px v-bind(boxShadow);
 }
 
 .input.is-disabled {

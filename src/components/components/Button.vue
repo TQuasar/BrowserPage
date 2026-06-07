@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   type?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default',
-  size?: 'large' | 'medium' | 'small',
+  size?: 'large' | 'medium' | 'small' | "smaller",
   disabled?: boolean,
   plain?: boolean,
   round?: boolean,
@@ -36,6 +36,7 @@ const sizeMap = {
   large: { height: '40px', fontSize: '16px', padding: '0 20px' },
   medium: { height: '32px', fontSize: '14px', padding: '0 16px' },
   small: { height: '24px', fontSize: '12px', padding: '0 12px' },
+  smaller: { height: '16px', fontSize: '10px', padding: '0 10px' }
 }
 
 const colorMap = {

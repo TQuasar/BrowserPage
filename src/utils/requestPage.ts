@@ -4,7 +4,7 @@
  * @param url
  * @returns {Promise<any>}
  */
-async function requestURL(url) {
+async function requestURL(url: string): Promise<{url: string, ico: string, name: string}> {
     const urlObj = (()=>{
         try {
             return new URL(url);
@@ -15,7 +15,7 @@ async function requestURL(url) {
 
     const response = await (await fetch(
         `http://localhost:3000/fetch-meta?url=${encodeURIComponent(url)}`
-    )).json()
+    )).json();
 
     if (response.error) return {
         "url": url,

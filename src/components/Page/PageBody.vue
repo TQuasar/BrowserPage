@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import {ref, defineAsyncComponent} from "vue";
+import {ref, defineAsyncComponent, Ref} from "vue";
 import manageUserConfig from "@utils/manageUserConfig";
 
-// 从响应式配置中获取 extensions
-const extensions = manageUserConfig.getConfig("extensions");
+const extensions: Ref<{
+  [name: string]: {
+    path: string,
+    setting: string,
+    icon: string,
+    languageZh: string
+  }
+}> = manageUserConfig.getConfig("extensions");
 
 const loadedComponents: any[] = [];
 /* 动态加载组件 */

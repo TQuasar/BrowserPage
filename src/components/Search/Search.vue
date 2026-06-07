@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {computed, Ref, ref} from "vue";
 import settingConfig from "@components/Search/manageSettingConfig";
+import History from "@components/Search/History";
 
 type engine = {
   name: string
@@ -9,46 +10,9 @@ type engine = {
 }
 settingConfig.readConfig();
 
-let incognitoMode: Ref<boolean> = settingConfig.getConfig("incognitoMode");
-class History {
-  private static searchHistories: Ref<string[][]> = settingConfig.getConfig("history");
-  private static maxHistory: Ref<number> = settingConfig.getConfig("maxHistory");
-  private static showHistory: Ref<number> = settingConfig.getConfig("showHistory");
+const incognitoMode = History.incognitoMode;
 
-  public static tools = [
-    {"name": "清空历史记录", "click": History.clearItems}
-  ];
-
-  private static writeHistory() {
-    settingConfig.setConfig(History.searchHistories.value, "history");
-    settingConfig.writeConfig();
-  }
-
-  public static addItem(query: string, url: string) {
-    if (incognitoMode.value) return;  /* 无痕模式下不记录 */
-    History.searchHistories.value.unshift([query, url]);
-    if (History.searchHistories.value.length >= History.maxHistory.value) {
-      History.searchHistories.value = History.searchHistories.value.slice(0, History.maxHistory.value);
-    }
-    History.writeHistory();
-  }
-
-  public static deleteItem(index: number) {
-    History.searchHistories.value.splice(index, 1);
-    History.writeHistory();
-  }
-
-  public static clearItems() {
-    History.searchHistories.value = [];
-    History.writeHistory();
-  }
-
-  public static visibleHistory() {
-    return History.searchHistories.value.slice(0, History.showHistory.value);
-  }
-}
-
-let openMethod: Ref<string> = settingConfig.getConfig("openMethod");
+/*let openMethod: Ref<string> = settingConfig.getConfig("openMethod");
 const changeMethod = () => {
   openMethod.value = openMethod.value === "_self" ? "_blank" : "_self";
   settingConfig.setConfig(openMethod.value, "openMethod");
@@ -56,7 +20,7 @@ const changeMethod = () => {
 };
 function openURL(url: string): void {
   window.open(url, openMethod.value);
-}
+}*/
 /**
  * The function `getEngine` query information of the engine `name`.
  * @param name the engine name
@@ -76,11 +40,11 @@ const query = (queryText: string) => {
   try {
     /* TODO: 增添自动检测补全协议部分 */
     new URL(queryText);
-    openURL(queryText);
+    History.openURL(queryText);
     History.addItem("", queryText);
   } catch (e) {
     const url = engineData.value.url.replace(/\${query}/, queryText)
-    openURL(url);
+    History.openURL(url);
     History.addItem(queryText, url);
   }
 };
@@ -99,11 +63,11 @@ let queryInput: string = "";
 <template>
   <div class="search">
     <!-- Search box -->
-    <div id="searchBox" :data-onSearch="String(onSearch)" :data-incognit="String(incognitoMode)">
+    <div id="searchBox" :data-onSearch="onSearch" :data-incognit="incognitoMode">
       <input
           id="searchInput"
           type="text"
-          :data-incognit="String(incognitoMode)"
+          :data-incognit="incognitoMode"
           autocomplete="off"
           :placeholder="`在 ${searchEngine} 中${incognitoMode ? '无痕搜索' : '搜索'}......`"
           @focus="onSearch = true"
@@ -112,23 +76,23 @@ let queryInput: string = "";
           v-model="queryInput"
       />
 
-      <div id="enterSearch" class="searchTools" :data-incognit="String(incognitoMode)" title="搜索网页" @click="query(queryInput)">
+      <div id="enterSearch" class="searchTools" :data-incognit="incognitoMode" title="搜索网页" @click="query(queryInput)">
         <img src="./images/enterSearch.svg" alt="搜索" width="24" height="24"/>
       </div>
       <div id="incognitoMode"
            class="searchTools"
-           :data-incognit="String(incognitoMode)"
+           :data-incognit="incognitoMode"
            title="无痕模式"
            @click="incognitoMode = !incognitoMode;settingConfig.setConfig(incognitoMode, 'incognitoMode');settingConfig.writeConfig();">
         <img src="./images/incognitoMode.svg" alt="无痕模式" height="24" width="24" />
       </div>
-      <div id="searchMethod" class="searchTools" :data-incognit="String(incognitoMode)" :title="openMethod === '_self' ? '在当前窗口打开搜索结果' : '在新窗口打开搜索结果'" @click="changeMethod">
-        <img v-if="openMethod==='_self'" src="./images/openSelf.svg" alt="无痕模式" height="24" width="24">
+      <div id="searchMethod" class="searchTools" :data-incognit="incognitoMode" :title="History.openMethod.value === '_self' ? '在当前窗口打开搜索结果' : '在新窗口打开搜索结果'" @click="History.changeMethod">
+        <img v-if="History.openMethod.value ==='_self'" src="./images/openSelf.svg" alt="无痕模式" height="24" width="24">
         <img v-else src="./images/openBlank.svg" alt="" height="24" width="24">
       </div>
-      <div id="searchEngine" class="searchTools" :data-incognit="String(incognitoMode)" :title="`使用 ${searchEngine} 搜索`"
+      <div id="searchEngine" class="searchTools" :data-incognit="incognitoMode" :title="`使用 ${searchEngine} 搜索`"
           @click="openEnginePanel = !openEnginePanel;console.log(openEnginePanel)"
-          :data-onSearch="String(onSearch)"
+          :data-onSearch="onSearch"
       >
         <span><!-- 切换搜索引擎右下角标 --><img id="engineIcon" :src="engineData.icon" alt="" width="16" height="16"></span>
         <img src="./images/searchEngine.svg" alt="引擎" width="24" height="24">
@@ -155,7 +119,7 @@ let queryInput: string = "";
       </div>
     </div>
     <!-- History -->
-    <div id="searchHistories" :data-incognit="String(incognitoMode)" v-if="onSearch" @mousedown.prevent @click.prevent>
+    <div id="searchHistories" :data-incognit="incognitoMode" v-if="onSearch" @mousedown.prevent @click.prevent>
       <!-- Record items -->
       <div
           class="history"
@@ -163,12 +127,12 @@ let queryInput: string = "";
           :key="index"
       >
         <img src="./images/enterSearch.svg" alt="" width="16" height="16">
-        <span class="historyItemContent" @click="openURL(item[1])">
-          <span class="historyItemName" :data-incognit="String(incognitoMode)">{{ item[0] }}</span>
+        <span class="historyItemContent" @click="History.openURL(item[1])">
+          <span class="historyItemName" :data-incognit="incognitoMode">{{ item[0] }}</span>
           <span class="historyItemURL">{{ item[1] }}</span>
         </span>
 
-        <span class="deleteHistory" :data-incognit="String(incognitoMode)" @click="History.deleteItem(index)">删除</span>
+        <span class="deleteHistory" :data-incognit="incognitoMode" @click="History.deleteItem(index)">删除</span>
       </div>
       <!-- Tools bar -->
       <div id="historyTool">
@@ -191,7 +155,7 @@ let queryInput: string = "";
         <div class="bookmarkTools"><span
             v-for="(item, index) in mark[1]"
             :key="index"
-            @click="openURL(item[1])"
+            @click="History.openURL(item[1])"
             :title="item[1]"
         >
           <img :src="item[2]" alt="" width="12" height="12">
@@ -230,10 +194,10 @@ let queryInput: string = "";
   width: var(--searchWidth);
   transition: background-color ease 0.2s;
 }
-#searchBox[data-onSearch="true"] {
+#searchBox[data-onSearch=true] {
   border-radius: var(--halfBoxHeight) var(--halfBoxHeight) 0 0;
 }
-#searchBox[data-incognit="true"] {
+#searchBox[data-incognit=true] {
   background-color: var(--backgroundDark);
 }
 
@@ -246,7 +210,7 @@ let queryInput: string = "";
   font-size: small;
   flex-grow: 1;
 }
-#searchInput[data-incognit="true"] {
+#searchInput[data-incognit=true] {
   color: var(--textColor6);
 }
 #searchInput:focus {
@@ -266,7 +230,7 @@ let queryInput: string = "";
   border-top-right-radius: var(--boxHeight);
   border-bottom-right-radius: var(--boxHeight);
 }
-#searchEngine[data-onSearch="true"] {
+#searchEngine[data-onSearch=true] {
   border-top-right-radius: var(--halfBoxHeight);
   border-bottom-right-radius: 0;
 }
@@ -280,7 +244,7 @@ let queryInput: string = "";
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.2);
 }
-.searchTools[data-incognit="true"]:hover {
+.searchTools[data-incognit=true]:hover {
   background-color: rgb(255, 255, 255, 0.2);
 }
 
@@ -339,7 +303,7 @@ img {
   border-radius: 0 0 var(--halfBoxHeight) var(--halfBoxHeight);
   z-index: 10;
 }
-#searchHistories[data-incognit="true"] {
+#searchHistories[data-incognit=true] {
   background-color: var(--backgroundDark);
 }
 
@@ -372,7 +336,7 @@ img {
   color: var(--linkColorHover);
   text-decoration: underline var(--linkColorHover);
 }
-.deleteHistory[data-incognit="true"] {
+.deleteHistory[data-incognit=true] {
   filter: brightness(250%);
 }
 
@@ -381,6 +345,12 @@ img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.historyItemName {
+  color: #000;
+}
+.historyItemName[data-incognit=true] {
+  color: var(--textColor6);
 }
 .historyItemURL {
   margin-left: 5px;

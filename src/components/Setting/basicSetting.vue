@@ -8,7 +8,7 @@ import Input from "@components/components/Input.vue";
 import List from "@components/components/List.vue";
 import rawConfig from "@utils/rawConfig";
 import Button from "@components/components/Button.vue";
-import requestURL from "@utils/requestPage.js";
+import requestURL from "@utils/requestPage.ts";
 import Tips from "@components/Tips/Tips";
 
 const props = defineProps<{settingTools: Function}>();
@@ -79,7 +79,7 @@ const defaultWebsite = <{name: string, ico: string, url: string}[]>manageUserCon
       />
     </List>
     <Item hoverColor="rgba(0,0,0,0)" gap="10px" border="none">
-      <Button title="添加新条目" type="info" @click="addWebsite" circle>十</Button>
+      <Button title="添加新条目" type="info" @click="addWebsite" circle width="30px" height="30px" padding="0">十</Button>
       <Text text="新条目地址: "/>
       <Input placeholder="输入目标网址" :model-value="newWebsite" width="60%" @change="(value) => newWebsite = String(value)" />
     </Item>
