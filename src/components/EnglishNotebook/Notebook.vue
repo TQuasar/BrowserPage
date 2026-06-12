@@ -9,6 +9,7 @@ void Glossary;
 
 import type { Component } from "vue";
 import NotebookHome from "@components/EnglishNotebook/Pages/NotebookHome.vue";
+import NotebookPrint from "@components/EnglishNotebook/Pages/NotebookPrint.vue";
 import Tips from "@components/Tips/Tips";
 import type {xxApi} from "@components/EnglishNotebook/Words";
 import type {autocomplete, definition, PageDef, relationship} from "@components/EnglishNotebook/Types";
@@ -55,6 +56,10 @@ const openHome = () => {
 const openWordPage = (word: string) => {
   addPage(`Word-${word}`, word, NotebookWord);
 }
+const openPrint = (word: string | undefined) => {
+  addPage(`Print ${word ? word : "All"}`, word ?? "", NotebookPrint);
+}
+openPrint(undefined);
 
 provide("openWordPage", openWordPage);
 provide("goHome", () => {
@@ -68,6 +73,7 @@ provide("goHome", () => {
   });
   if (!end) openHome();
 });
+provide("print", openPrint);
 provide("autocompleteWords", <autocomplete>(async (word: Ref<string>, pronunciation: Ref<string>, definitions: Ref<definition>, relationships: Ref<relationship>, examples: Ref<string[]>) => {
   if (!word.value.trim()) {
     Tips.addTip({type: "error", text: "No input words.", time: 1000});
@@ -76,36 +82,6 @@ provide("autocompleteWords", <autocomplete>(async (word: Ref<string>, pronunciat
 
   const tipId = Tips.addTip({type: "loading", text: "Try autocompleting information.", time: 9999999});
   try {
-    /*const response = await (await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.value}`)).json();
-
-    if (response?.title) {
-      Tips.addTip({type: "error", text: `The word: ${word.value} is not exist.`, time: 1000});
-    } else {
-      const json: DictionaryResponse = <DictionaryResponse> response;
-      const phonetics: Set<string> = new Set<string>();
-      const partOfSpeech: Set<string> = new Set<string>();
-      const synonyms: Set<string> = new Set<string>();
-      const antonyms: Set<string> = new Set<string>();
-      json.forEach(entry => {
-        entry.phonetics.forEach(p => phonetics.add(p.text));
-        entry.meanings.forEach(m => {
-          partOfSpeech.add(m.partOfSpeech);
-          m.antonyms.forEach(a => antonyms.add(a));
-          m.synonyms.forEach(s => synonyms.add(s));
-        });
-      });
-
-      pronunciation.value = `/${Array.from(phonetics).map(p => p.slice(1, p.length-1)).join("; ")}/`;
-      definitions.value = <definition>Array.from(partOfSpeech).map(p => ([p, ""]));
-      if (synonyms.size + antonyms.size > 0) {
-        relationships.value = [];
-        Array.from(synonyms).forEach(s => relationships.value.push({"label": "syn.", "word": s}));
-        Array.from(antonyms).forEach(a => relationships.value.push({"label": "ant.", "word": a}));
-      }
-
-      Tips.addTip({type: "succeed", text: "Add word successfully.", time: 1000});
-    }*/
-
     const response = await (await fetch(`https://v2.xxapi.cn/api/englishwords?word=${word.value}`)).json();
     if (response.code == 200) {
       const data: xxApi = <xxApi> response.data;

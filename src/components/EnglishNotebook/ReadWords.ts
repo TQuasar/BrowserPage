@@ -11,12 +11,14 @@ class ReadWords {
 
     static read(word: string) {
         try {
+            /* 加载缓存在DOM的audio */
             const audio: HTMLAudioElement = ReadWords.mapping.get(word)!;
             audio.play().catch(e => {
                 throw e;
             });
         } catch (e) {
             try {
+                /* 无缓存尝试获取 */
                 const audio = document.createElement('audio');
                 audio.src = `https://dict.youdao.com/dictvoice?audio=${word}&type=2`;
                 ReadWords.mapping.set(word, audio);
@@ -25,16 +27,19 @@ class ReadWords {
                     throw e;
                 })
             } catch (e) {
+                /* 不在词库中的单词 */
                 if (ReadWords.support) {
+                    /* 支持朗读 */
                     let speech;
                     if (ReadWords.speeches.has(word)) {
                         speech = ReadWords.speeches.get(word)!;
                     } else {
                         speech = new SpeechSynthesisUtterance(word);
+                        speech.lang = "en-US";
+                        ReadWords.speeches.set(word, speech);
                     }
                     window.speechSynthesis.speak(speech);
                 } else {
-                    console.log("666");
                     Tips.addTip({type: "warn", text: "Playback failed", time: 1500});
                 }
             }

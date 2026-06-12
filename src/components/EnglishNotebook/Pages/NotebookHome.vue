@@ -31,14 +31,14 @@ const {
   resetForm,
 } = useGlossaryForm();
 
-const showAllWords = () => {
+const defaultWords = () => {
   searchResult.value = Array.from(Glossary.glossary.keys());
 };
 
 const searchWords = (value: string) => {
   searchValue.value = String(value);
   if (!searchValue.value.trim()) {
-    showAllWords();
+    defaultWords();
     return;
   }
   searchResult.value = Glossary.search(searchValue.value.trim());
@@ -59,12 +59,12 @@ const addWord = () => {
   );
 
   resetForm();
-  showAllWords();
+  defaultWords();
 };
-
+const openPrint = <()=>void>inject("print");
 const autocomplete = (<autocomplete>inject("autocompleteWords")).bind(null, word, pronunciation, definitions, relationships, examples);
 
-showAllWords();
+defaultWords();
 
 const openWordPage = inject("openWordPage");
 </script>
@@ -78,6 +78,7 @@ const openWordPage = inject("openWordPage");
     <section class="word-summary">
       <h2>Words</h2>
       <p>You recorded a total of {{ Glossary.size() }} word(s)!</p>
+      <Button type="primary" @click="openPrint()">Print Words</Button>
     </section>
 
     <section class="word-form">
@@ -153,7 +154,7 @@ const openWordPage = inject("openWordPage");
           <span class="word-spell">{{ item }}</span>
           <span class="word-pronunciation">{{ Glossary.getEntry(item)?.p }}</span>
           <span class="word-translate">{{ Glossary.getEntry(item)?.d.map(d => d[1]).join(';') }}</span>
-          <Button type="danger" size="smaller" plain @click="event => {Glossary.deleteEntry(item);showAllWords()}">Delete</Button>
+          <Button type="danger" size="smaller" plain @click="event => {Glossary.deleteEntry(item);defaultWords()}">Delete</Button>
         </div>
       </List>
     </section>

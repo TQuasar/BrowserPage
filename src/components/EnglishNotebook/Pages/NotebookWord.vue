@@ -110,6 +110,7 @@ const toggleEditMode = () => {
 
 const playPronunciation = () => ReadWords.read(word.value);
 
+const openPrint = <(word: string)=>void>inject("print");
 
 const autocomplete = (<autocomplete>inject("autocompleteWords")).bind(null, word, pronunciation, definitions, relationships, examples);
 
@@ -146,6 +147,7 @@ watch(() => props.page.content, loadEntry, { immediate: true });
           <Button type="primary" size="small" @click="playPronunciation">Play pronunciation</Button>
           <Button type="default" size="small" @click="goHome?.()">Return Home</Button>
           <Button v-if="hasPreview" type="default" size="small" @click="toggleEditMode">Edit</Button>
+          <Button type="default" size="small" @click="openPrint(word)">print</Button>
         </div>
       </div>
     </div>

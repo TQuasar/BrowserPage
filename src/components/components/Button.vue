@@ -11,6 +11,7 @@ interface Props {
   height?: string,
   fontSize?: string,
   padding?: string,
+  selectText?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,7 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   plain: false,
   round: false,
-  circle: false
+  circle: false,
+  selectText: false
 })
 
 const emit = defineEmits<{
@@ -71,6 +73,7 @@ const colorMap = {
       backgroundColor: plain ? colorMap[type!].plainBg : colorMap[type!].bg,
       borderColor: colorMap[type!].bg,
       color: plain ? colorMap[type!].plainColor : (type === 'default' ? '#606266' : '#ffffff'),
+      userSelect: selectText ? 'auto' : 'none',
     }"
     @click="handleClick"
   >
