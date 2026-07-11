@@ -1,5 +1,6 @@
-import { ref, computed } from "vue";
+import {ref, computed, Ref} from "vue";
 import type { definition, relationship } from "@components/EnglishNotebook/Types";
+import {Glossary} from "@components/EnglishNotebook/Glossary";
 
 export type GlossaryFormState = {
   word?: string;
@@ -8,15 +9,18 @@ export type GlossaryFormState = {
   relationships?: relationship;
   examples?: string[];
   comments?: string[];
+  typeLevel?: number;
 };
 
-export function useGlossaryForm(initial: GlossaryFormState = {}) {
-  const word = ref(initial.word ?? "");
-  const pronunciation = ref(initial.pronunciation ?? "");
-  const definitions = ref<definition>(initial.definitions && initial.definitions.length ? initial.definitions : [["", ""]]);
-  const relationships = ref<relationship>(initial.relationships && initial.relationships.length ? initial.relationships : [{ label: "", word: "" }]);
-  const examples = ref<string[]>(initial.examples && initial.examples.length ? initial.examples : [""]);
-  const comments = ref<string[]>(initial.comments && initial.comments.length ? initial.comments : [""]);
+export function useGlossaryForm(useWord: string = "") {
+  const wordInfo = Glossary.getEntry(useWord);
+  const word = ref(wordInfo?.w ?? "");
+  const pronunciation = ref(wordInfo?.p ?? "");
+  const definitions = ref<definition>(wordInfo?.d && wordInfo?.d.length ? wordInfo?.d : [["", ""]]);
+  const relationships = ref<relationship>(wordInfo?.r && wordInfo?.r.length ? wordInfo?.r : [{ label: "", word: "" }]);
+  const examples = ref<string[]>(wordInfo?.e && wordInfo?.e.length ? wordInfo?.e : [""]);
+  const comments = ref<string[]>(wordInfo?.c && wordInfo?.c.length ? wordInfo?.c : [""]);
+  const typeLevel: Ref<number> = ref<number>(wordInfo?.t ?? 10);
 
   const normalizedDefinitions = computed(() => {
     return definitions.value
@@ -40,6 +44,7 @@ export function useGlossaryForm(initial: GlossaryFormState = {}) {
     relationships.value = [{ label: "", word: "" }];
     examples.value = [""];
     comments.value = [""];
+    typeLevel.value = 1;
   };
 
   const setForm = (state: GlossaryFormState) => {
@@ -71,6 +76,11 @@ export function useGlossaryForm(initial: GlossaryFormState = {}) {
     if (comments.value.length > 1) comments.value.splice(index, 1);
   };
 
+  const changeLevelType = (plus: number) => {
+    typeLevel.value += plus;
+    typeLevel.value = Math.min(Math.max(1, typeLevel.value), 10);
+  }
+
   return {
     word,
     pronunciation,
@@ -78,6 +88,7 @@ export function useGlossaryForm(initial: GlossaryFormState = {}) {
     relationships,
     examples,
     comments,
+    typeLevel,
     normalizedDefinitions,
     normalizedRelationships,
     normalizedExamples,
@@ -92,5 +103,6 @@ export function useGlossaryForm(initial: GlossaryFormState = {}) {
     removeComment,
     resetForm,
     setForm,
+    changeLevelType
   };
 }

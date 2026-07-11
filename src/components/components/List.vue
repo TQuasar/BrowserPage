@@ -8,11 +8,13 @@ import Input from "@components/components/Input.vue";
 interface Props {
   title?: string | boolean | undefined,
   order?: "in" | "out" | "no",
+  compact?: boolean,
   items: any[]
 }
 const props = withDefaults(defineProps<Props>(), {
   title: false,
-  order: "out"
+  order: "out",
+  compact: false
 });
 </script>
 
@@ -26,6 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
         v-for="(item, index) in items"
         :key="index"
         :order="props.order"
+        :compact="props.compact"
     ><slot :item="item" :index="index"></slot></Li>
   </div>
 </template>

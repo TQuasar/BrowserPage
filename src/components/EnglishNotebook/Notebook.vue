@@ -13,6 +13,8 @@ import NotebookPrint from "@components/EnglishNotebook/Pages/NotebookPrint.vue";
 import Tips from "@components/Tips/Tips";
 import type {xxApi} from "@components/EnglishNotebook/Words";
 import type {autocomplete, definition, PageDef, relationship} from "@components/EnglishNotebook/Types";
+import NotebookGlossary from "@components/EnglishNotebook/Pages/NotebookGlossary.vue";
+import NotebookPractise from "@components/EnglishNotebook/Pages/NotebookPractise.vue";
 
 const pages = shallowRef<PageDef[]>([
   { id: 0, title: "Home", content: "", component: NotebookHome }
@@ -59,8 +61,25 @@ const openWordPage = (word: string) => {
 const openPrint = (word: string | undefined) => {
   addPage(`Print ${word ? word : "All"}`, word ?? "", NotebookPrint);
 }
-openPrint(undefined);
+const openGlossary = () => {
+  addPage(`Glossary`, "", NotebookGlossary);
+}
+const openPractise = (level: number = 10) => {
+  addPage(`Practise`, String(level), NotebookPractise);
+}
+//openPrint(undefined);
 
+const moodsIcon: string[] = [];
+
+openPractise();
+
+(new Array(10).fill(0))
+    .map((_, index) => `./moodsIcon/mood-${index+1}.svg`)
+    .forEach((path, index) => {
+      import(path).then(r => moodsIcon[index] = r.default);
+    });
+
+provide("moodsIcon", moodsIcon);
 provide("openWordPage", openWordPage);
 provide("goHome", () => {
   let end = false;
@@ -74,6 +93,8 @@ provide("goHome", () => {
   if (!end) openHome();
 });
 provide("print", openPrint);
+provide("openGlossary", openGlossary);
+provide("openPractise", openPractise);
 provide("autocompleteWords", <autocomplete>(async (word: Ref<string>, pronunciation: Ref<string>, definitions: Ref<definition>, relationships: Ref<relationship>, examples: Ref<string[]>) => {
   if (!word.value.trim()) {
     Tips.addTip({type: "error", text: "No input words.", time: 1000});
@@ -85,7 +106,7 @@ provide("autocompleteWords", <autocomplete>(async (word: Ref<string>, pronunciat
     const response = await (await fetch(`https://v2.xxapi.cn/api/englishwords?word=${word.value}`)).json();
     if (response.code == 200) {
       const data: xxApi = <xxApi> response.data;
-      console.log(data);
+      //console.log(data);
       pronunciation.value = `/${([data.ukphone.trim(), data.usphone.trim()]).join("; ")}/`;
       definitions.value = data.translations.map(entry => [`${entry.pos}.`, entry.tran_cn]);
       examples.value = data.sentences.map(sentence => sentence.s_content);

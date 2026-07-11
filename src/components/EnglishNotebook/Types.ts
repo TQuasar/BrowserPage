@@ -2,7 +2,7 @@ import {Component, Ref} from "vue";
 
 type definition = [partOfSpeech: string, translation: string][];
 type relationship = {label: string, word: string;}[];
-type glossaryType = { w: string; d: definition; p: string; r: relationship; e: string[]; c: string[]; t: number};
+type glossaryType = { w: string; d: definition; p: string; r: relationship; e: string[]; c: string[]; t: number; l: number; rl: number};
 type Page = {
     id: number;
     title: string;

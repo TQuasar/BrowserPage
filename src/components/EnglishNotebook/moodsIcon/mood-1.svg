@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+    <circle cx="8" cy="8" r="7" fill="#00e676"/>
+    <!-- 闭眼笑 -->
+    <path d="M4.5 7 Q5.5 5.5 6.5 7" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path d="M9.5 7 Q10.5 5.5 11.5 7" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <!-- 腮红 -->
+    <circle cx="4" cy="8.5" r="0.8" fill="#fff" opacity="0.4"/>
+    <circle cx="12" cy="8.5" r="0.8" fill="#fff" opacity="0.4"/>
+    <!-- 完美嘴 -->
+    <path d="M5.5 9.5 Q8 13 10.5 9.5" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <!-- 顶部光芒 -->
+    <line x1="8" y1="1.5" x2="8" y2="0.5" stroke="#fff" stroke-width="0.6" stroke-linecap="round"/>
+    <line x1="5" y1="2.5" x2="4.5" y2="1.5" stroke="#fff" stroke-width="0.6" stroke-linecap="round"/>
+    <line x1="11" y1="2.5" x2="11.5" y2="1.5" stroke="#fff" stroke-width="0.6" stroke-linecap="round"/>
+</svg>

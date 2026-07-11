@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+    <circle cx="8" cy="8" r="7" fill="#d32f2f"/>
+    <!-- 眉毛 -->
+    <line x1="4" y1="5" x2="6" y2="6" stroke="#fff" stroke-width="0.8" stroke-linecap="round"/>
+    <line x1="12" y1="5" x2="10" y2="6" stroke="#fff" stroke-width="0.8" stroke-linecap="round"/>
+    <!-- 眼睛 -->
+    <circle cx="5.5" cy="7" r="0.8" fill="#fff"/>
+    <circle cx="10.5" cy="7" r="0.8" fill="#fff"/>
+    <!-- 眼泪 -->
+    <path d="M5.5 8.5 Q5.5 10 5 11" stroke="#fff" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+    <path d="M10.5 8.5 Q10.5 10 11 11" stroke="#fff" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+    <!-- 嘴巴 -->
+    <path d="M5 12 Q8 10 11 12" stroke="#fff" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+</svg>

@@ -11,26 +11,28 @@ import type {Page, autocomplete} from "@components/EnglishNotebook/Types";
 const props = defineProps<{ page: Page }>();
 
 const {
-  word,
-  pronunciation,
-  definitions,
-  relationships,
-  examples,
-  comments,
-  normalizedDefinitions,
-  normalizedRelationships,
-  normalizedExamples,
-  normalizedComments,
-  addDefinition,
-  removeDefinition,
-  addRelationship,
-  removeRelationship,
-  addExample,
-  removeExample,
-  addComment,
-  removeComment,
-  setForm,
-} = useGlossaryForm();
+    word,
+    pronunciation,
+    definitions,
+    relationships,
+    examples,
+    comments,
+    typeLevel,
+    normalizedDefinitions,
+    normalizedRelationships,
+    normalizedExamples,
+    normalizedComments,
+    addDefinition,
+    removeDefinition,
+    addRelationship,
+    removeRelationship,
+    addExample,
+    removeExample,
+    addComment,
+    removeComment,
+    setForm,
+    changeLevelType
+} = useGlossaryForm(props.page.content);
 
 const entryNotFound = ref(false);
 const editMode = ref(false);
@@ -85,6 +87,7 @@ const saveEntry = () => {
     normalizedRelationships.value,
     normalizedExamples.value,
     normalizedComments.value,
+    typeLevel.value
   );
 
   const savedForm = {
@@ -133,6 +136,8 @@ const cancelEdit = () => {
 };
 
 watch(() => props.page.content, loadEntry, { immediate: true });
+
+const moodsIcon = <string[]>inject("moodsIcon");
 </script>
 
 <template>
@@ -140,7 +145,13 @@ watch(() => props.page.content, loadEntry, { immediate: true });
     <div class="page-header">
       <div class="title-row">
         <div>
-          <h2>{{ word }}</h2>
+          <!-- Title -->
+          <div style="display: flex;flex-direction: row;gap: 5px;align-items: center;">
+            <h2>{{ word }}</h2>
+            <img style="pointer-events: none;" :src="moodsIcon[typeLevel-1]" alt="图片" width="24" height="24" >
+            <Button type="success" size="smaller" plain @click="changeLevelType(-1);saveEntry()">upgrade</Button>
+            <Button type="danger" size="smaller" plain @click="changeLevelType(1);saveEntry()">downgrade</Button>
+          </div>
           <p class="subtitle">{{ entryNotFound ? "The current entry was not found. You can fill it out and save it." : "Details of words read from the vocabulary book." }}</p>
         </div>
         <div class="header-actions">

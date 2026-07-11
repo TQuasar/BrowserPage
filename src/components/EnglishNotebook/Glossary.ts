@@ -2,6 +2,11 @@
 import type {definition, glossaryType, relationship, glossaryTemplate} from "./Types";
 
 class Glossary {
+    public static readonly baseTime: number = (new Date('2026-06-15T00:00:00')).getTime();
+    static readonly DB_NAME = "EnglishNotebookGlossaryDB";
+    static readonly STORE_NAME = "glossary";
+    static readonly PASSED_NAME = "glossary_passed";
+    static readonly DB_VERSION = 5;
     static readonly partOfSpeech = new Set(["n.", "v.", "adj.", "adv.", "pron.", "prep.", "conj.", "interj.", "int.", "art.", "num.", "abbr.", "aux.", "mod.", "vt.", "vi.", "cn.", "un.", "noun", "verb", "adjective", "adverb", "pronoun", "preposition", "conjunction", "interjection", "article", "numeral", "abbreviation", "auxiliary verb", "modal verb", "transitive verb", "intransitive verb", "countable noun", "uncountable noun"]);
     static readonly abbr = {
         "n.": "n.",
@@ -40,68 +45,183 @@ class Glossary {
         "countable noun": "cn.",
         "uncountable noun": "un."
     } as const;
-    static readonly relationship = new Set([...Array.from(Glossary.partOfSpeech), "pl.", "comp.", "sup.", "pt.", "pp.", "v.ing", "syn.", "ant.", "variant", "3s", "full"])
+    static readonly relationship = new Set([...Array.from(Glossary.partOfSpeech), "pl.", "comp.", "sup.", "pt.", "pp.", "v.ing", "syn.", "ant.", "variant", "3s", "full"]);
 
-    /**
-     * @type {Map<string, { word: string, definition: definition, pronunciation: string, relationship: Object, examples: string[] }>}
-     */
     static glossary: Map<string, glossaryType> = new Map();
     static readonly template: glossaryTemplate = [
-        ["w", "d", "p", "r", "e", "c", "t"],
-        ["", [], "", [], [], [], 10]
+        ["w", "d", "p", "r", "e", "c", "t", "l", "rl"],
+        ["", [], "", [], [], [], 10, Glossary.baseTime, Glossary.baseTime]
     ];
+    static readonly supportsIndexedDB = typeof indexedDB !== "undefined" && indexedDB !== null;
+    static dbPromise: Promise<IDBDatabase> | null = Glossary.supportsIndexedDB ? Glossary.openDB() : null;
+    static refreshPinyinWords: boolean = true;
+
+    static async getDB(): Promise<IDBDatabase> {
+        if (!Glossary.supportsIndexedDB || !Glossary.dbPromise) {
+            throw new Error("IndexedDB is not available.");
+        }
+        return Glossary.dbPromise;
+    }
 
     static getAbbr(partOfSpeech: string) {
         if (Glossary.partOfSpeech.has(partOfSpeech)) {
-            return Glossary.abbr[partOfSpeech!];
+            return Glossary.abbr[partOfSpeech as keyof typeof Glossary.abbr];
         }
         throw new Error(`Invalid part of speech: ${partOfSpeech}`);
     }
 
-    static tryComplete(glossary: object[], template: glossaryTemplate): glossaryType[] {
-        try {
-            const result = [];
-            for (const entry of glossary) {
-                for (let i = 0; i < template[0].length; i++) {
-                    const key = template[0][i];
-                    if (Object.hasOwn(entry, key)) {
-                        entry[key] = entry[key];
-                    } else {
-                        entry[key] = template[1][i];
-                    }
+    static async openDB(): Promise<IDBDatabase> {
+        if (!Glossary.supportsIndexedDB) {
+            return Promise.reject(new Error("IndexedDB is not supported in this environment."));
+        }
+
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(Glossary.DB_NAME, Glossary.DB_VERSION);
+
+            request.onupgradeneeded = () => {
+                const db = request.result;
+                if (!db.objectStoreNames.contains(Glossary.STORE_NAME)) {
+                    db.createObjectStore(Glossary.STORE_NAME, { keyPath: "w" });
                 }
+                if (!db.objectStoreNames.contains(Glossary.PASSED_NAME)) {
+                    db.createObjectStore(Glossary.PASSED_NAME, { autoIncrement: true });
+                }
+            };
 
-                result.push(entry);
-            }
-            return <glossaryType[]>result;
-        } catch (e) {
-            console.error(e);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+            request.onblocked = () => console.warn("Glossary DB open blocked.");
+        });
+    }
+
+    static clearLocalStorage() {
+        localStorage.removeItem("glossary");
+    }
+
+    static async loadAllEntries(db: IDBDatabase): Promise<glossaryType[]> {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(Glossary.STORE_NAME, "readonly");
+            const store = transaction.objectStore(Glossary.STORE_NAME);
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                resolve(request.result as glossaryType[]);
+            };
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    static async saveEntryToDB(entry: glossaryType): Promise<void> {
+        if (!Glossary.supportsIndexedDB) {
+            throw new Error("IndexedDB is not available.");
+        }
+
+        try {
+            const db = await Glossary.getDB();
+            const transaction = db.transaction(Glossary.STORE_NAME, "readwrite");
+            const store = transaction.objectStore(Glossary.STORE_NAME);
+            store.put(entry);
+            await Glossary.awaitTransaction(transaction);
+        } catch (error) {
+            console.error(error);
         }
     }
 
-    static readGlossary(glossary: null | Map<string, glossaryType> = null) {
-        if (glossary) {
-            this.glossary = glossary;
-        } else {
-            const glossary: string | null = localStorage.getItem('glossary');
-            if (glossary) {
-                /* 根据JSON列表自动补齐为Map，以每一项的word为键 */
-                const json: glossaryType[] = Glossary.tryComplete(JSON.parse(glossary), Glossary.template);
-                this.glossary = new Map(json.map(entry => [entry.w, entry]));
-            } else {
-                this.glossary = new Map();
-                this.saveGlossary();
+    static async passedWordToDB(word: string) {
+        if (!Glossary.supportsIndexedDB) throw new Error("IndexedDB is not available.");
+        if (Glossary.glossary.has(word)) {
+            try {
+                const db: IDBDatabase = await Glossary.getDB();
+                const transaction = db.transaction(Glossary.PASSED_NAME, "readwrite");
+                const store = transaction.objectStore(Glossary.PASSED_NAME);
+                store.put(word);
+                await Glossary.awaitTransaction(transaction);
+
+                this.deleteEntry(word);
+            } catch (e) {
+                console.error(e);
             }
         }
     }
 
-    static saveGlossary() {
-        localStorage.setItem('glossary', JSON.stringify(Array.from(this.glossary.values())));
+    static async getPassedWord() {
+        if (!Glossary.supportsIndexedDB) {
+            throw new Error("IndexedDB is not available.");
+        }
+        const db = await this.getDB();
+
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(Glossary.PASSED_NAME, "readonly");
+            const store = transaction.objectStore(Glossary.PASSED_NAME);
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                resolve(request.result as string[]);
+            };
+            request.onerror = () => reject(request.error);
+        });
     }
 
-    static clearGlossary() {
-        this.glossary.clear();
-        this.saveGlossary();
+    static async deleteEntryFromDB(word: string): Promise<void> {
+        if (!Glossary.supportsIndexedDB) {
+            throw new Error("IndexedDB is not available.");
+        }
+
+        try {
+            const db = await Glossary.getDB();
+            const transaction = db.transaction(Glossary.STORE_NAME, "readwrite");
+            const store = transaction.objectStore(Glossary.STORE_NAME);
+            store.delete(word);
+            await Glossary.awaitTransaction(transaction);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    static async saveAllToDB(): Promise<void> {
+        if (!Glossary.supportsIndexedDB) {
+            throw new Error("IndexedDB is not available.");
+        }
+
+        try {
+            const db = await Glossary.getDB();
+            const transaction = db.transaction(Glossary.STORE_NAME, "readwrite");
+            const store = transaction.objectStore(Glossary.STORE_NAME);
+            store.clear();
+            for (const entry of this.glossary.values()) {
+                store.put(entry);
+            }
+            await Glossary.awaitTransaction(transaction);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    static async awaitTransaction(transaction: IDBTransaction): Promise<void> {
+        return new Promise((resolve, reject) => {
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
+            transaction.onabort = () => reject(transaction.error);
+        });
+    }
+
+    static async initialize() {
+        if (!Glossary.supportsIndexedDB) {
+            throw new Error("IndexedDB is not available.");
+        }
+
+        try {
+            const db = await Glossary.getDB();
+            const storedEntries = await Glossary.loadAllEntries(db);
+            if (storedEntries.length > 0) {
+                this.glossary = new Map(storedEntries.map(entry => [entry.w, entry]));
+            } else if (this.glossary.size > 0) {
+                await Glossary.saveAllToDB();
+                this.clearLocalStorage();
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     static #checkDefinition(definition: [partOfSpeech: string, translation: string][]) {
@@ -136,25 +256,51 @@ class Glossary {
      * @param {relationship} relationship - Associate with other vocabulary.
      * @param {string[]} examples - An array of example sentences using the word (default is an empty array).
      * @param {string[]} comment - Comments for the word.
+     * @param {number} type - A 1(familiar) ~ 10(unfamiliar) value, it shows that how your familiarity with words.
      */
     static addEntry(word: string, definition: definition = [], pronunciation: string = "", relationship: relationship = [], examples: string[] = [], comment: string[] = [], type: number) {
         this.#checkDefinition(definition);
         this.#checkRelationship(relationship);
 
         definition.forEach(entry => entry[0] = this.getAbbr(entry[0]));
-
-        const entry = {"w": word, "d": definition, "p": pronunciation, "r": relationship, "e": examples, "c": comment , "t": Math.max(Math.min(type, 10), 1)};
+        const entry = {
+            "w": word,
+            "d": definition,
+            "p": pronunciation,
+            "r": relationship,
+            "e": examples,
+            "c": comment,
+            "t": Math.max(Math.min(type, 10), 1),
+            "l": (new Date()).getTime() - Glossary.baseTime,
+            "rl": this.glossary.get(word)?.rl ?? (new Date()).getTime()
+        };
         this.glossary.set(word, entry);
-        this.saveGlossary();
+        void Glossary.saveEntryToDB(entry);
+        this.refreshPinyinWords = true;
+    }
+
+    private static checkProperties(word: object | undefined): glossaryType | undefined {
+        if (!word) return word;
+
+        Glossary.template[0].forEach((key, index) => {
+            if (!Object.hasOwn(word, key)) {
+                word[key] = Glossary.template[1][index];
+            }
+        });
+
+        this.saveEntryToDB(<glossaryType>word).then();
+        return <glossaryType>word;
     }
 
     static getEntry(word: string) {
-        return this.glossary.get(word);
+        return this.checkProperties(this.glossary.get(word));
+        //return this.glossary.get(word);
     }
 
     static deleteEntry(word: string) {
         this.glossary.delete(word);
-        this.saveGlossary();
+        this.refreshPinyinWords = true;
+        void Glossary.deleteEntryFromDB(word);
     }
 
     static size() {
@@ -162,7 +308,7 @@ class Glossary {
     }
 
     private static levenshteinDistance(a: string, b: string): number {
-        const matrix = [];
+        const matrix: number[][] = [];
 
         // 初始化矩阵
         for (let i = 0; i <= b.length; i++) {
@@ -190,17 +336,17 @@ class Glossary {
         return matrix[b.length][a.length];
     }
 
-    static search(query: string, maxSuggestions: number = 10, minSimilarity: number = 0.2): string[] {
-        const suggestions: { word: string; similarity: number }[] = [];
+    private static searchAny(from: string[], query: string, maxSuggestions: number = 10, minSimilarity: number = 0.2): string[] {
+        const suggestions: { item: string; similarity: number }[] = [];
 
-        // 遍历词库中的每个单词，计算与查询字符串的编辑距离，并记录相似度分数
-        for (const [word] of this.glossary) {
-            const distance = this.levenshteinDistance(query, word);
-            const maxLength = Math.max(query.length, word.length);
-            const similarity = 1 - distance / maxLength;
+        for (const item of from) {
+            const distance = Glossary.levenshteinDistance(query, item);
+            const maxLength = Math.max(query.length, item.length);
+            const factor = Math.pow(Math.min(query.length, item.length) / maxLength, 1.5);
+            const similarity = (1 - distance / maxLength) * factor;
 
             if (similarity >= minSimilarity) {
-                suggestions.push({ word, similarity });
+                suggestions.push({ item, similarity });
             }
         }
 
@@ -208,9 +354,22 @@ class Glossary {
         suggestions.sort((a, b) => b.similarity - a.similarity);
 
         // 返回最多 maxSuggestions 个建议
-        return suggestions.slice(0, maxSuggestions).map(suggestion => suggestion.word);
+        return suggestions.slice(0, maxSuggestions).map(suggestion => suggestion.item);
+    }
+
+    static searchWord(query: string, maxSuggestions: number = 10, minSimilarity: number = 0.2): string[] {
+        return this.searchAny(this.glossary.keys().toArray(), query, maxSuggestions, minSimilarity);
+    }
+
+    static changeTypeLevel(word: string, plus: number) {
+        if (!this.glossary.has(word)) return;
+        const value = Glossary.getEntry(word)!;
+        Glossary.addEntry(value.w, value.d, value.p, value.r, value.e, value.c, Math.max(Math.min(value.t + plus, 10), 1));
     }
 }
-Glossary.readGlossary();
+
+await Glossary.initialize();
+await Glossary.passedWordToDB("upgrade");
+console.log(await Glossary.getPassedWord());
 
 export { Glossary };

@@ -21,6 +21,7 @@ const props = defineProps<{ page: Page }>();
 
 <style scoped>
 .notebook-main {
+  position: relative;
   flex: 1;
   width: 100%;
   overflow: auto;

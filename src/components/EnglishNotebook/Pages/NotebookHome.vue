@@ -10,38 +10,41 @@ import type { autocomplete } from "@components/EnglishNotebook/Types";
 const searchValue = ref("");
 const searchResult = ref<string[]>([]);
 const {
-  word,
-  pronunciation,
-  definitions,
-  relationships,
-  examples,
-  comments,
-  normalizedDefinitions,
-  normalizedRelationships,
-  normalizedExamples,
-  normalizedComments,
-  addDefinition,
-  removeDefinition,
-  addRelationship,
-  removeRelationship,
-  addExample,
-  removeExample,
-  addComment,
-  removeComment,
-  resetForm,
+    word,
+    pronunciation,
+    definitions,
+    relationships,
+    examples,
+    comments,
+    normalizedDefinitions,
+    normalizedRelationships,
+    normalizedExamples,
+    normalizedComments,
+    typeLevel,
+    addDefinition,
+    removeDefinition,
+    addRelationship,
+    removeRelationship,
+    addExample,
+    removeExample,
+    addComment,
+    removeComment,
+    resetForm,
+    changeLevelType
 } = useGlossaryForm();
 
 const defaultWords = () => {
-  searchResult.value = Array.from(Glossary.glossary.keys());
+  searchResult.value = [] /*Array.from(Glossary.glossary.keys())*/;
 };
 
+const searchInput: string = "";
 const searchWords = (value: string) => {
   searchValue.value = String(value);
   if (!searchValue.value.trim()) {
     defaultWords();
     return;
   }
-  searchResult.value = Glossary.search(searchValue.value.trim());
+  searchResult.value = Glossary.searchWord(searchValue.value.trim());
 };
 
 const addWord = () => {
@@ -56,6 +59,7 @@ const addWord = () => {
     normalizedRelationships.value,
     normalizedExamples.value,
     normalizedComments.value,
+      10
   );
 
   resetForm();
@@ -66,7 +70,10 @@ const autocomplete = (<autocomplete>inject("autocompleteWords")).bind(null, word
 
 defaultWords();
 
-const openWordPage = inject("openWordPage");
+const openWordPage = <(word: string)=>void>inject("openWordPage");
+const openGlossary = <()=>void>inject("openGlossary");
+const openPractise = <()=>void>inject("openPractise");
+const moodsIcon = <string[]>inject("moodsIcon");
 </script>
 
 <template>
@@ -79,6 +86,8 @@ const openWordPage = inject("openWordPage");
       <h2>Words</h2>
       <p>You recorded a total of {{ Glossary.size() }} word(s)!</p>
       <Button type="primary" @click="openPrint()">Print Words</Button>
+      <Button type="primary" style="margin-left: 15px;" @click="openGlossary()">Glossary</Button>
+      <Button type="primary" style="margin-left: 15px;" @click="openPractise()">Practise</Button>
     </section>
 
     <section class="word-form">
@@ -144,19 +153,23 @@ const openWordPage = inject("openWordPage");
       <h3>Search Words</h3>
       <Input
         :model-value="searchValue"
-        @input="e => searchWords(String(e))"
+        @input="e => {searchInput = String(e);searchWords(searchInput);}"
         placeholder="Search word..."
         width="90%"
       />
-      <List :items="searchResult" order="no" v-slot="{ item }" id="searchWordsList">
-        <div class="search-item" @click="() => openWordPage(item)">
-          <span class="word-partOfSpeech">{{ Glossary.getEntry(item)?.d.map(d => d[0]).join('/ ') }}</span>
-          <span class="word-spell">{{ item }}</span>
-          <span class="word-pronunciation">{{ Glossary.getEntry(item)?.p }}</span>
-          <span class="word-translate">{{ Glossary.getEntry(item)?.d.map(d => d[1]).join(';') }}</span>
-          <Button type="danger" size="smaller" plain @click="event => {Glossary.deleteEntry(item);defaultWords()}">Delete</Button>
+      <List v-if="searchResult.length" :items="searchResult" order="no" v-slot="{ item }" id="searchWordsList">
+        <div class="search-item">
+          <img style="pointer-events: none;" :src="moodsIcon[(Glossary.getEntry(item)!.t-1)!]" alt="图片" width="16" height="16" >
+          <span @click="() => openWordPage(item)" class="word-link">
+            <span class="word-partOfSpeech">{{ Glossary.getEntry(item)?.d.map(d => d[0]).join('/ ') }}</span>
+            <span class="word-spell">{{ item }}</span>
+            <span class="word-pronunciation">{{ Glossary.getEntry(item)?.p }}</span>
+            <span class="word-translate">{{ Glossary.getEntry(item)?.d.map(d => d[1]).join(';') }}</span>
+          </span>
+          <Button type="danger" size="smaller" plain @click="Glossary.deleteEntry(item);searchWords(searchInput);">Delete</Button>
         </div>
       </List>
+      <div v-else style="color: #3b3a34;">暂无搜索结果</div>
     </section>
   </div>
 </template>
@@ -170,6 +183,7 @@ const openWordPage = inject("openWordPage");
 }
 .word-form,
 .search-section {
+  text-align: center;
   margin-bottom: 24px;
   padding: 16px;
   border: 1px solid #e2e2e2;
@@ -202,8 +216,12 @@ const openWordPage = inject("openWordPage");
   display: inline-block;
 }
 #searchWordsList {
+  text-align: left;
   width: 90%;
   box-sizing: content-box;
+}
+.word-link {
+  flex-grow: 1;
 }
 .search-item {
   height: 10px;
